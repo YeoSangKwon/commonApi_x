@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">commonAPI_x</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Button -->
+    <string name="room_db">Room DB</string>
+    <string name="live_data">Live Data</string>
+    <string name="retrofit">Retrofit And Live Data</string>
+    <string name="select">DB select</string>
+    <string name="insert">DB insert</string>
+    <string name="change">Change</string>
+    <string name="_select">Select</string>
+    <string name="start">Service Start</string>
+    <string name="stop">Service Stop</string>
+
+    <!-- HINT -->
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+
+</resources>
