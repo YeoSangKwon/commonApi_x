@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     class mReceiver: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             val data = intent?.getStringExtra("DATA")
-            Log.e("111111","onClickButton $data")
+            Log.e("MainActivity","onClickButton $data")
             val mIntent = Intent(context, MainActivity::class.java)
             val pi:PendingIntent = PendingIntent.getActivity(context, 0, mIntent, PendingIntent.FLAG_ONE_SHOT)
             try {
@@ -137,7 +137,6 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == ACTION_OVERLAY_PERMISSION){
-            Log.e("11111","onActivityResult")
             val serviceIntent = Intent(this, AlwaysTopService::class.java)
             serviceIntent.putExtra("inputExtra", "Foreground Service Test")
             ContextCompat.startForegroundService(this, serviceIntent)
