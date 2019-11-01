@@ -28,7 +28,6 @@ interface UserDAO {
     /**
      * Simple Query는 List 형태의 리턴값을 받으며 변화를 감지 할 수 없습니다.
      * 하지만 Observable Query 는 LiveData 형태의 리턴값을 받으며 데이터가 변화할 경우 변화를 감지하여 데이터를 재갱신합니다
-     * 출처 : https://medium.com/@gus0000123/
      * */
     //Simple Query
     @Query("SELECT * FROM UserEntity")

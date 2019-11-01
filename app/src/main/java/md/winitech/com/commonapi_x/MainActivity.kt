@@ -30,44 +30,24 @@ import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
 
-    class mReceiver: BroadcastReceiver(){
+    class mReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val data = intent?.getStringExtra("DATA")
-            Log.e("MainActivity","onClickButton $data")
+            Log.e("MainActivity", "onClickButton $data")
             val mIntent = Intent(context, MainActivity::class.java)
-            val pi:PendingIntent = PendingIntent.getActivity(context, 0, mIntent, PendingIntent.FLAG_ONE_SHOT)
+            val mPendingIntent: PendingIntent =
+                PendingIntent.getActivity(context, 0, mIntent, PendingIntent.FLAG_ONE_SHOT)
             try {
-                pi.send()
-            }catch (e:Exception){
+                mPendingIntent.send()
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 
+    private val ACTION_OVERLAY_PERMISSION: Int = 200
     private var receiver: BroadcastReceiver? = null
     private val bcAction = "broadCastTest"
-
-    fun registerReceiver() {
-        if (null != receiver) {
-            receiver = null
-        }
-
-        this.receiver = mReceiver()
-
-        val filter = IntentFilter()
-        filter.addCategory(Intent.CATEGORY_DEFAULT)
-        filter.addAction(bcAction)
-        LocalBroadcastManager.getInstance(this).registerReceiver(this.receiver as mReceiver, filter)
-    }
-
-    private fun unregisterReceiver() {
-        if (receiver != null) {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(this.receiver as mReceiver)
-            receiver = null
-        }
-    }
-
-    private val ACTION_OVERLAY_PERMISSION:Int = 200
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btn_start.setOnClickListener {
-//            startService()
+            //            startService()
         }
 
         btn_stop.setOnClickListener {
@@ -92,12 +72,12 @@ class MainActivity : AppCompatActivity() {
             startActivity(mIntent)
         }
 
-        btn_liveData.setOnClickListener{
+        btn_liveData.setOnClickListener {
             val mIntent = Intent(this, LiveDataActivity::class.java)
             startActivity(mIntent)
         }
 
-        btn_retrofit.setOnClickListener{
+        btn_retrofit.setOnClickListener {
             val mIntent = Intent(this, RetrofitActivity::class.java)
             startActivity(mIntent)
         }
@@ -118,11 +98,11 @@ class MainActivity : AppCompatActivity() {
         unregisterReceiver()
     }
 
-    private fun startService(){
-        if(!Settings.canDrawOverlays(this)){
+    private fun startService() {
+        if (!Settings.canDrawOverlays(this)) {
             val mIntent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
             startActivityForResult(mIntent, ACTION_OVERLAY_PERMISSION)
-        }else{
+        } else {
             val serviceIntent = Intent(this, AlwaysTopService::class.java)
             serviceIntent.putExtra("inputExtra", "Foreground Service Test")
             startForegroundService(serviceIntent)
@@ -136,10 +116,30 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == ACTION_OVERLAY_PERMISSION){
+        if (requestCode == ACTION_OVERLAY_PERMISSION) {
             val serviceIntent = Intent(this, AlwaysTopService::class.java)
             serviceIntent.putExtra("inputExtra", "Foreground Service Test")
             ContextCompat.startForegroundService(this, serviceIntent)
+        }
+    }
+
+    private fun registerReceiver() {
+        if (null != receiver) {
+            receiver = null
+        }
+
+        this.receiver = mReceiver()
+
+        val filter = IntentFilter()
+        filter.addCategory(Intent.CATEGORY_DEFAULT)
+        filter.addAction(bcAction)
+        LocalBroadcastManager.getInstance(this).registerReceiver(this.receiver as mReceiver, filter)
+    }
+
+    private fun unregisterReceiver() {
+        if (receiver != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(this.receiver as mReceiver)
+            receiver = null
         }
     }
 

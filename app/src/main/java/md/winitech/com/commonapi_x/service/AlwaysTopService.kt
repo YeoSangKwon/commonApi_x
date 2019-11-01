@@ -41,7 +41,7 @@ class AlwaysTopService : Service() {
         mView = mInflater.inflate(R.layout.alwaus_on_touch_view, null)
         mView!!.setOnTouchListener(mOnTouchListener)
         mView!!.btn_test?.setOnClickListener {
-            var mIntent = Intent("broadCastTest")
+            val mIntent = Intent("broadCastTest")
             mIntent.putExtra("DATA","TEST")
             LocalBroadcastManager.getInstance(this).sendBroadcast(mIntent)
         }
