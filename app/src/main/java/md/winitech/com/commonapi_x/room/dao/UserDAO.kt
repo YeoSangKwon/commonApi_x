@@ -44,3 +44,11 @@ interface UserDAO {
     fun getNameObservable(first_name:String) : LiveData<List<UserEntity>>
 
 }
+
+
+
+
+
+
+
+
