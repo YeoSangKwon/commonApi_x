@@ -6,6 +6,12 @@
     <string name="room_db">Room DB</string>
     <string name="live_data">Live Data</string>
     <string name="retrofit">Retrofit And Live Data</string>
+    <string name="coroutine">Coroutine Example</string>
+    <string name="coroutine2">Coroutine Example 2</string>
+    <string name="coroutine3">Coroutine Example 3</string>
+    <string name="coroutine4">Coroutine Example 4 (polling)</string>
+    <string name="koin">koin by DI</string>
+
     <string name="select">DB select</string>
     <string name="insert">DB insert</string>
     <string name="change">Change</string>
@@ -16,5 +22,6 @@
     <!-- HINT -->
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>

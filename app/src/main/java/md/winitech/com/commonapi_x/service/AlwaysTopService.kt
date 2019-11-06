@@ -14,6 +14,7 @@ import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -34,7 +35,9 @@ class AlwaysTopService : Service() {
         return null
     }
 
-    @SuppressLint("InflateParams")
+
+    //서비스 초기설정
+    @SuppressLint("InflateParams", "RtlHardcoded")
     override fun onCreate() {
         super.onCreate()
         val mInflater: LayoutInflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -71,13 +74,14 @@ class AlwaysTopService : Service() {
                     PixelFormat.TRANSLUCENT
                 )
             }
-            params.gravity = Gravity.TOP or Gravity.LEFT
+            params.gravity = Gravity.TOP or Gravity.RIGHT
             windowManager!!.addView(mView, params)
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
+    //서비스 동작
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val input = intent!!.getStringExtra("inputExtra")
         createNotificationChannel()
@@ -95,7 +99,7 @@ class AlwaysTopService : Service() {
             .build()
 
         startForeground(1, notification)
-        return Service.START_NOT_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onDestroy() {
@@ -110,6 +114,7 @@ class AlwaysTopService : Service() {
         }
     }
 
+    //노티피케이션 체널 생성
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
@@ -123,6 +128,9 @@ class AlwaysTopService : Service() {
         }
     }
 
+    /**
+     * 뷰를 드래그로 이동시키는 부분
+     * */
     private var isMove = false
     private var mTouchX: Float = 0.toFloat()
     private var mTouchY: Float = 0.toFloat()
@@ -145,12 +153,15 @@ class AlwaysTopService : Service() {
                 isMove = true
                 val x = (event.rawX - mTouchX).toInt()
                 val y = (event.rawY - mTouchY).toInt()
+
                 val num = 5
                 if (x > -num && x < num && y > -num && y < num) {
                     isMove = false
                     return@OnTouchListener true
                 }
-                params.x = mViewX + x
+                //X좌표가 LEFT일 경우는 +X를 해줘야하고
+                //X좌표가 RIGTH일 경우는 -X를 해 줘햐한다
+                params.x = mViewX - x
                 params.y = mViewY + y
                 windowManager!!.updateViewLayout(mView, params)
             }

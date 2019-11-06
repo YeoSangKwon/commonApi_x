@@ -4,6 +4,8 @@
 
 package md.winitech.com.commonapi_x
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -18,11 +20,17 @@ import android.view.Menu
 import android.app.PendingIntent
 import android.view.MenuItem
 import android.app.ActivityManager
+import android.content.pm.PackageManager
+import android.os.Looper
 import android.view.View
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.gms.location.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import md.winitech.com.commonapi_x.coroutine.CoroutineActivity
+import md.winitech.com.commonapi_x.koin.KoinActivity
 import md.winitech.com.commonapi_x.livedata.LiveDataActivity
 import md.winitech.com.commonapi_x.retrofit.RetrofitActivity
 import md.winitech.com.commonapi_x.room.RoomActivity
@@ -51,32 +59,107 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val TAG = "MainActivity"
+
+    private val multiplePermissionsCode = 100
     private val ACTION_OVERLAY_PERMISSION: Int = 200
     private var receiver: BroadcastReceiver? = null
     private val bcAction = "broadCastTest"
     private var isShowing = true
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    val locationCallback = mLocationCallback()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //LocalBroadcastService
         registerReceiver()
 
+        //permission check & Location
+        permissionCheck()
+
+        //OnClickListener
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
-
-        btn_start.setOnClickListener {
-            //            startService()
-        }
-
-        btn_stop.setOnClickListener {
-            stopService()
-        }
-
+        btn_start.setOnClickListener { startService() }
+        btn_stop.setOnClickListener { stopService() }
         btn_room.setOnClickListener(mOnClickListener)
         btn_liveData.setOnClickListener(mOnClickListener)
         btn_retrofit.setOnClickListener(mOnClickListener)
+        btn_coroutine.setOnClickListener(mOnClickListener)
+        btn_koin.setOnClickListener(mOnClickListener)
+    }
+
+
+    /**
+     * 다중 퍼미션 체크
+     * */
+    private fun permissionCheck() {
+        val permissionArray =
+            mutableListOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+
+        val _iter = permissionArray.iterator()
+        while (_iter.hasNext()) {
+            if (ContextCompat.checkSelfPermission(this, _iter.next()) == PackageManager.PERMISSION_GRANTED) {
+                _iter.remove()
+            }
+        }
+
+        val array = permissionArray.toTypedArray()
+        if (permissionArray.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, array, multiplePermissionsCode)
+        } else {
+            addLocationListner()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            multiplePermissionsCode -> {
+                if (grantResults.isNotEmpty()) {
+                    for ((count, grantResult) in grantResults.withIndex()) {
+                        if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                            Log.e(TAG, "denied to ${permissions[count]}")
+                            finish()
+                        }
+                    }
+                    addLocationListner()
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isShowing = true
+        stopService()
+    }
+
+    inner class mLocationCallback:LocationCallback(){
+        override fun onLocationResult(p0: LocationResult?) {
+            val location = p0?.lastLocation
+            Log.e(TAG, "${location?.latitude} , ${location?.longitude}")
+        }
+    }
+
+    private fun addLocationListner() {
+        val locationRequest = LocationRequest()
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = 10000
+        locationRequest.fastestInterval = 10000
+
+        if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            //사용자 위치 업데이트
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
+        } else {
+            permissionCheck()
+        }
     }
 
     /**
@@ -85,12 +168,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         startService()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        isShowing = true
-        stopService()
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     override fun onDestroy() {
@@ -120,6 +198,14 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.btn_retrofit -> {
                 val mIntent = Intent(this, RetrofitActivity::class.java)
+                startActivity(mIntent)
+            }
+            R.id.btn_coroutine -> {
+                val mIntent = Intent(this, CoroutineActivity::class.java)
+                startActivity(mIntent)
+            }
+            R.id.btn_koin -> {
+                val mIntent = Intent(this, KoinActivity::class.java)
                 startActivity(mIntent)
             }
         }
@@ -186,7 +272,6 @@ class MainActivity : AppCompatActivity() {
         }
         return false
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.

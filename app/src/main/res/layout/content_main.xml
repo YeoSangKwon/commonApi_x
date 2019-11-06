@@ -68,4 +68,20 @@
             app:layout_constraintTop_toBottomOf="@id/btn_liveData"
             app:layout_constraintLeft_toLeftOf="parent"/>
 
+    <Button
+            android:id="@+id/btn_coroutine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coroutine"
+            app:layout_constraintTop_toBottomOf="@id/btn_retrofit"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <Button
+            android:id="@+id/btn_koin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/koin"
+            app:layout_constraintTop_toBottomOf="@id/btn_coroutine"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

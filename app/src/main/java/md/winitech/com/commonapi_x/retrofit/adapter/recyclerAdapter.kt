@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import md.winitech.com.commonapi_x.R
 import md.winitech.com.commonapi_x.retrofit.model.dataModelList
+import md.winitech.com.commonapi_x.retrofit.model.ktModel
 import java.util.ArrayList
 
 class recyclerAdapter  : RecyclerView.Adapter<recyclerAdapter.ViewHolder>() {
@@ -60,6 +61,10 @@ class recyclerAdapter  : RecyclerView.Adapter<recyclerAdapter.ViewHolder>() {
 
     fun addItem(data: dataModelList.dataModel) {
         listData.add(data)
+    }
+
+    fun removeItem(data: Collection<dataModelList.dataModel>) {
+        listData.removeAll(data)
     }
 
     /**
