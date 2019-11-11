@@ -5,5 +5,6 @@
 package md.winitech.com.commonapi_x.koin.component
 
 interface DataRepository {
+    var std:String
     fun getData():String
 }

@@ -5,6 +5,6 @@
 package md.winitech.com.commonapi_x.koin.component
 
 class DataRepositoryImpl : DataRepository {
-    var std = "TEST"
+    override var std = "TEST"
     override fun getData() = "DATA"
 }
